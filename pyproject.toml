@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "cakemix-python"
 version = "0.1.0"
-description = ""
+description = "Cakemix is a tool for creating code template generators like create-react-app and npm-init. Avoiding you to waste time organizing a project."
 authors = ["Vitor Daniel <vitor036daniel@gmail.com>"]
 license = "GPL-3.0"
 readme = "README.rst"
@@ -61,6 +61,9 @@ inline-quotes = "double"
 "wemake-python-styleguide" = ["+*", "-WPS305"]
 "cohesion" = ["+*"]
 "dlint" = ["+*"]
+
+[tool.flakehell.exceptions."tests/"]
+"flake8-bandit" = ["-*"]
 
 [tool.darglint]
 strictness = "long"

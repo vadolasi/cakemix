@@ -1,0 +1,48 @@
+repos:
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: ""
+    hooks:
+      - id: isort
+        name: isort-auto-format
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.0.1
+    hooks:
+      - id: add-trailing-comma
+        name: add-trailing-comma-auto-format
+  - repo: local
+    hooks:
+      - id: pyformat
+        name: pyformat-auto-format
+        entry: pyformat
+        language: python
+        types: [python]
+        require_serial: false
+      - id: flakehell
+        name: flakehell-lint
+        entry: flakehell
+        args: ["lint"]
+        language: python
+        types: [python]
+        pass_filenames: false
+      - id: pytest
+        name: pytest-unit-tests
+        entry: pytest
+        language: python
+        pass_filenames: false
+      - id: safety
+        name: safety-dependencies-check
+        entry: safety
+        args: [check, --full-report]
+        language: python
+        pass_filenames: false
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: ""
+    hooks:
+      - id: mypy
+        name: mypy-types-check
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: master
+    hooks:
+      - id: commitizen
+        name: commitizen-commit-message-check
+        stages: [commit-msg]
