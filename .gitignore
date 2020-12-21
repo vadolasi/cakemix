@@ -1,6 +1,6 @@
 # Editors
-.vscode
-.idea
+.vscode/
+.idea/
 
 # Byte-compiled
 __pycache__/
@@ -12,4 +12,7 @@ __pycache__/
 .mypy_cache/
 
 # flake8-dashboard
-flake8_dashboard
+flake8_dashboard/
+
+# Build / publish
+dist

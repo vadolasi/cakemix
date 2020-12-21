@@ -2,7 +2,7 @@
 
 from click.testing import CliRunner
 
-from cakemix.cli import add
+from cakemix_python.cli import add
 
 
 def test_add():

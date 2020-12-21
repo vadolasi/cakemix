@@ -58,9 +58,13 @@ inline-quotes = "double"
 
 [tool.flakehell.plugins]
 "flake8-*" = ["+*", "-E400"]
+mccabe = ["+*"]
+"pep8-naming" = ["+*"]
+pycodestyle = ["+*"]
+pyflakes = ["+*"]
 "wemake-python-styleguide" = ["+*", "-WPS305"]
-"cohesion" = ["+*"]
-"dlint" = ["+*"]
+cohesion = ["+*"]
+dlint = ["+*"]
 
 [tool.flakehell.exceptions."tests/"]
 "flake8-bandit" = ["-*"]
@@ -74,6 +78,11 @@ use_parentheses = true
 
 [tool.poetry.scripts]
 cakemix = "cakemix.cli:cli"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.0.1"
+tag_format = "$version"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

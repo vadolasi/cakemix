@@ -14,9 +14,9 @@ repos:
       - id: pyformat
         name: pyformat-auto-format
         entry: pyformat
+        args: [--in-place]
         language: python
         types: [python]
-        require_serial: false
       - id: flakehell
         name: flakehell-lint
         entry: flakehell
