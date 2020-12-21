@@ -1,0 +1,15 @@
+# Editors
+.vscode
+.idea
+
+# Byte-compiled
+__pycache__/
+
+# Tests
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# flake8-dashboard
+flake8_dashboard
