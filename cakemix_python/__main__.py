@@ -2,4 +2,11 @@
 
 from importlib.metadata import entry_points
 
-entry_points()['console_scripts'][0].load()
+cakemix = list(
+    filter(
+        lambda entry_point: entry_point.name == 'cakemix',
+        entry_points()['console_scripts'],
+    ),
+)[0]
+
+cakemix.load()()

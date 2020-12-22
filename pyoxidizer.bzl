@@ -165,7 +165,7 @@ def make_exe(dist):
     # resources, and other options. The returned object represents the
     # standalone executable that will be built.
     exe = dist.to_python_executable(
-        name=".",
+        name="cakemix",
 
         # If no argument passed, the default `PythonPackagingPolicy` for the
         # distribution is used.
@@ -197,11 +197,11 @@ def make_exe(dist):
     # `add_python_resources()` adds these objects to the binary, with a load
     # location as defined by the packaging policy's resource location
     # attributes.
-    exe.add_python_resources(exe.pip_install(["cakemix_python"]))
+    exe.add_python_resources(exe.pip_install(["."]))
 
     # Invoke `pip install` using a requirements file and add the collected resources
     # to our binary.
-    #exe.add_python_resources(exe.pip_install(["-r", "requirements.txt]))
+    #exe.add_python_resources(exe.pip_install(["-r", "requirements.txt"]))
 
 
 

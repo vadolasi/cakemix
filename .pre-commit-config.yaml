@@ -4,11 +4,6 @@ repos:
     hooks:
       - id: isort
         name: isort-auto-format
-  - repo: https://github.com/asottile/add-trailing-comma
-    rev: v2.0.1
-    hooks:
-      - id: add-trailing-comma
-        name: add-trailing-comma-auto-format
   - repo: local
     hooks:
       - id: pyformat
@@ -17,6 +12,13 @@ repos:
         args: [--in-place]
         language: python
         types: [python]
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.0.1
+    hooks:
+      - id: add-trailing-comma
+        name: add-trailing-comma-auto-format
+  - repo: local
+    hooks:
       - id: flakehell
         name: flakehell-lint
         entry: flakehell

@@ -31,8 +31,8 @@ jobs:
           add-trailing-comma ./**/*.py
           pyformat --in-place ./**/*.py
       - name: Lint and test
-          run: |
-            safety check
-            flakehell lint
-            pytest
-            mypy ./**/*.py
+        run: |
+          safety check
+          flakehell lint
+          pytest
+          mypy ./**/*.py
