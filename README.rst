@@ -2,7 +2,7 @@
 Cakemix
 =======
 
-.. image:: https://img.shields.io/github/workflow/status/vadolasi/cakemix/python-package?style=flat-square
+.. image:: https://img.shields.io/github/workflow/status/vadolasi/cakemix/Python%20package
     :alt: Tests status
 
 .. image:: https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod

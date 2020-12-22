@@ -51,10 +51,12 @@ commitizen = "^2.11.1"
 cohesion = "^1.0.0"
 dlint = "^0.11.0"
 
+[tool.flake8]
+inline-quotes = "double"
+
 [tool.flakehell]
 format = "wemake"
 show_source = true
-inline-quotes = "double"
 
 [tool.flakehell.plugins]
 "flake8-*" = ["+*", "-E400"]

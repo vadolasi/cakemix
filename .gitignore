@@ -15,4 +15,5 @@ __pycache__/
 flake8_dashboard/
 
 # Build / publish
-dist
+dist/
+build/
