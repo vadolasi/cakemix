@@ -24,15 +24,14 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install poetry
           poetry install
-          poetry shell
       - name: Auto format
         run: |
-          isort .
-          add-trailing-comma ./**/*.py
-          pyformat --in-place ./**/*.py
+          poetry run isort .
+          poetry run add-trailing-comma ./**/*.py
+          poetry run pyformat --in-place ./**/*.py
       - name: Lint and test
         run: |
-          safety check
-          flakehell lint cakemix_python/ tests/
-          pytest
-          mypy ./**/*.py
+          poetry run safety check
+          poetry run flakehell lint cakemix_python/ tests/
+          poetry run pytest
+          poetry run mypy ./**/*.py

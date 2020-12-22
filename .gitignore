@@ -17,3 +17,6 @@ flake8_dashboard/
 # Build / publish
 dist/
 build/
+
+# Database
+database.sqlite

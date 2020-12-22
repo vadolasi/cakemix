@@ -71,6 +71,7 @@ pyflakes = ["+*"]
 
 [tool.flakehell.exceptions."tests/"]
 "flake8-bandit" = ["-*"]
+"wemake-python-styleguide" = ["-WPS437"]
 
 [tool.darglint]
 strictness = "long"

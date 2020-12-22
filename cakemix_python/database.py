@@ -1,13 +1,8 @@
 """Manage database."""
 
-from sqlalchemy import (
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    create_engine,
-)
+import enum
+
+from sqlalchemy import Column, Enum, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
@@ -27,17 +22,25 @@ class BoilerplateTable(Base):
     paths = relationship('PathTable')
 
 
+class PathContentType(enum.Enum):
+    """PathTable.content_type choices."""
+
+    plain_text = 1
+    not_plain_text = 2
+    directory = 3
+
+
 class PathTable(Base):
     """Table with the boilerplates paths."""
 
     __tablename__ = 'paths'
 
-    path_id = Column(Integer, primary_key=True)
+    pk = Column(Integer, primary_key=True)
     boilerplate_name = Column(
         Integer, ForeignKey('boilerplates.name'), nullable=False,
     )
     path = Column(String, nullable=False)
-    is_plain_text = Column(Boolean, nullable=False)
+    content_type = Column(Enum(PathContentType), default=1)
 
     boilerplate = relationship('BoilerplateTable')
 
@@ -54,8 +57,18 @@ class Database(object):
         if directory:
             directory = f'{directory}/'
 
-        engine = create_engine(f'sqlite:///{directory}database.sqlite')
+        self._directory = f'sqlite:///{directory}database.sqlite'
+
+    def __enter__(self):
+        """Create a SQLAlchemy session."""  # noqa: DAR201
+        engine = create_engine(self._directory)
         Base.metadata.create_all(engine)
 
         session = sessionmaker(bind=engine)
         self._session = session()
+
+        return self
+
+    def __exit__(self, *args):
+        """Close the SQLAlchemy session."""  # noqa: DAR101
+        self._session.close()
