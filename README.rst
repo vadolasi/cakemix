@@ -3,9 +3,10 @@ Cakemix
 =======
 
 .. image:: https://img.shields.io/github/workflow/status/vadolasi/cakemix/python-package?style=flat-square
-    :alt: The last commit passed the tests
+    :alt: Tests status
 
-|
+.. image:: https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod
+    :alt: Open in Gitpod.io
 
 English | `Português <./locales/pt-br/README.rst>`_
 

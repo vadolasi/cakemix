@@ -1,0 +1,4 @@
+tasks:
+  - init: export PIP_USER=false && pip install --upgarde pip setuptools wheel && pip install poetry && poetry
+      install
+    command: poetry shell
