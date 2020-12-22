@@ -33,6 +33,6 @@ jobs:
       - name: Lint and test
         run: |
           safety check
-          flakehell lint
+          flakehell lint cakemix_python/ tests/
           pytest
           mypy ./**/*.py
