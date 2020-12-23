@@ -60,7 +60,11 @@ class Database(object):
         self._directory = f'sqlite:///{directory}database.sqlite'
 
     def __enter__(self):
-        """Create a SQLAlchemy session."""  # noqa: DAR201
+        """Create a SQLAlchemy session.
+
+        Returns:
+            class <Database>: The database object.
+        """
         engine = create_engine(self._directory)
         Base.metadata.create_all(engine)
 

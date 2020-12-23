@@ -8,8 +8,8 @@ from cakemix_python import cli
 def test_add():
     """Test the "add" command."""
     runner = CliRunner()
-    output = runner.invoke(cli.add)
-    assert output.exit_code == 0
+    output = runner.invoke(cli.add, ['./fake_projects/fake_project/', 'test'])
+    assert output.exit_code == 1
 
 
 def test_remove():
