@@ -1,24 +1,25 @@
 [tool.poetry]
 name = "cakemix-python"
-version = "0.1.0"
+version = "0.2.0"
 description = "Cakemix is a tool for creating code template generators like create-react-app and npm-init. Avoiding you to waste time organizing a project."
 authors = ["Vitor Daniel <vitor036daniel@gmail.com>"]
-license = "GPL-3.0"
+license = "GPL-3.0-or-later"
 readme = "README.rst"
 repository = "https://github.com/vadolasi/cakemix/"
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Code Generators",
-    "License :: OSI Approved :: GNU General Public License (GPL)",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
 ]
 keywords = [
     "boilerplate",
     "cli",
     "generator",
     "templating",
+]
+packages = [
+    { include = "cakemix" }
 ]
 
 [tool.poetry.urls]
@@ -33,7 +34,10 @@ click = "^7.1.2"
 toml = "^0.10.2"
 PyYAML = "^5.3.1"
 SQLAlchemy = "^1.3.22"
-docopt = "^0.6.2"
+importlib-metadata = { version = "^3.3.0", python = "<3.8" }
+questionary = "^1.9.0"
+rich = "^9.5.1"
+SQLAlchemy-Utils = "^0.36.8"
 
 [tool.poetry.dev-dependencies]
 wemake-python-styleguide = "^0.14.1"
@@ -54,9 +58,6 @@ pre-commit = "^2.9.3"
 commitizen = "^2.11.1"
 sqlalchemy-stubs = "^0.3"
 
-[tool.flake8]
-inline-quotes = "double"
-
 [tool.flakehell]
 format = "wemake"
 show_source = true
@@ -73,6 +74,9 @@ pyflakes = ["+*"]
 "flake8-bandit" = ["-*"]
 "wemake-python-styleguide" = ["-WPS437"]
 
+[tool.flakehell.exceptions."cakemix/output.py"]
+"wemake-python-styleguide" = ["+*", "-WPS323"]
+
 [tool.darglint]
 strictness = "long"
 
@@ -87,7 +91,7 @@ version = "0.0.1"
 tag_format = "$version"
 
 [tool.poetry.scripts]
-cakemix = "cakemix_python.cli:cli"
+cakemix = "cakemix.cli:cli"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -5,9 +5,11 @@ def make_dist():
 def make_exe(dist):
     policy = dist.make_python_packaging_policy()
 
+    policy.resources_location = "filesystem-relative:lib"
+
     python_config = dist.make_python_interpreter_config()
 
-    python_config.run_module = "cakemix_python"
+    python_config.run_module = "cakemix"
 
     exe = dist.to_python_executable(
         name="cakemix",

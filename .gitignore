@@ -5,8 +5,10 @@
 # Byte-compiled
 __pycache__/
 
-# Tests
+# Tests / Coverage
 .pytest_cache/
+.coverage
+coverage.xml
 
 # mypy
 .mypy_cache/
