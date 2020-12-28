@@ -5,9 +5,10 @@ from pathlib import Path
 
 import click
 import toml
+from binaryornot.check import is_binary
 
 from cakemix.database import Cakemix, Database
-from cakemix.output import run_task
+from cakemix.output import exit_with_error, run_task
 
 
 def read_cakemix_src(database: Database, cakemix_src: Path):
@@ -27,7 +28,7 @@ def read_cakemix_src(database: Database, cakemix_src: Path):
         return ('File \"settings.toml\" not found',)
 
     cakemix = database.add(
-        database.cakemix_object,
+        Cakemix,
         database,
         structure=Path(cakemix_src / 'structure.yaml').read_text(),
         **toml.loads(Path(cakemix_src / 'settings.toml').read_text()),
@@ -57,22 +58,14 @@ def read_paths(src_dir: Path, cakemix: Cakemix):
     src_len = len(str(src_dir)) + 1
 
     for path in sorted(src_dir.rglob('*')):
-        if path.is_dir():
-            cakemix.add_path(
-                path=str(path)[src_len:], content_type='directory',
-            )
-        else:
-            try:  # noqa: WPS229
-                path.read_text()
-                cakemix.add_path(
-                    path=str(path)[src_len:], content_type='plain_text',
-                )
-            except UnicodeDecodeError:
-                cakemix.add_path(
-                    path=str(path)[
-                        src_len:
-                    ], content_type='not_plain_text',
-                )
+        path_str = str(path)[src_len:]
+        if not path_str.startswith('.cakemixsrc'):
+            if path.is_dir():
+                cakemix.add_path(path=path_str, content_type='directory')
+            elif is_binary(str(path)):
+                cakemix.add_path(path=path_str, content_type='not_plain_text')
+            else:
+                cakemix.add_path(path=path_str, content_type='plain_text')
 
     return ('',)
 
@@ -108,6 +101,12 @@ def add(src: str):
         src (str): Cakemix location.
     """
     src_dir = Path(src)
+
+    if not src_dir.exists():
+        exit_with_error(f'directory \"{src_dir}\" not found')
+    elif not src_dir.is_dir():
+        exit_with_error(f'\"{src_dir}\" is not a directory')
+
     cakemix_src = src_dir / '.cakemixsrc'
 
     with Database() as database:
@@ -125,7 +124,7 @@ def add(src: str):
 
         run_task(
             'Saving cakemix...',
-            'Cakemix saved',
+            f'Cakemix \"{cakemix.name}\" saved',
             save_cakemix,
             src_dir,
             cakemix,

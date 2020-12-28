@@ -1,6 +1,5 @@
 cakemix
 sqlalchemy
-docopt
 tablename
 nullable
 orm
@@ -13,3 +12,4 @@ tracebacks
 cakemixes
 datefmt
 utils
+binaryornot

@@ -9,7 +9,7 @@ def test_database():
     """Test database."""
     with Database(in_memory=True) as database:
         boilerplate = database.add(
-            database.cakemix_object,
+            Cakemix,
             database,
             name='test',
             structure='',
@@ -24,7 +24,7 @@ def test_database_fields():
     """Tests database fields."""
     with Database(in_memory=True) as database:
         boilerplate = database.add(
-            database.cakemix_object,
+            Cakemix,
             database,
             name='test',
             structure='',

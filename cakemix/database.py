@@ -5,7 +5,7 @@ from typing import Any, Callable
 
 from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker, Query
 from sqlalchemy_utils.types.choice import ChoiceType
 
 Base = declarative_base()
@@ -19,46 +19,8 @@ class CakemixTable(Base):
     name = Column(String, primary_key=True)
     structure = Column(String, nullable=False)
 
-    arguments = relationship('ArgumentTable')
-    paths = relationship('PathTable')
-
-
-class Cakemix(CakemixTable):
-    """Provides high-level functions to manipulate the cakemixes."""
-
-    def __init__(self, database: 'Database', **args):
-        """Create a BoilerplateTable object.
-
-        Args:
-            database (Database): [description]
-            args (tuple): [description]
-        """
-        super().__init__(**args)
-        self._database = database
-
-    def add_argument(self, **kwargs):
-        """[summary].
-
-        Args:
-            kwargs (dict): [description]
-        """
-        self.arguments.append(
-            self._database.add(
-                self._database.argument_object, **kwargs,
-            ),
-        )
-
-    def add_path(self, **kwargs):
-        """[summary].
-
-        Args:
-            kwargs (dict): [description]
-        """
-        self.paths.append(
-            self._database.add(
-                self._database.path_object, **kwargs,
-            ),
-        )
+    arguments = relationship('ArgumentTable', cascade='all, delete-orphan')
+    paths = relationship('PathTable', cascade='all, delete-orphan')
 
 
 class ArgumentTable(Base):
@@ -121,6 +83,44 @@ class PathTable(Base):
     cakemix = relationship('Cakemix')
 
 
+class Cakemix(CakemixTable):
+    """Provides high-level functions to manipulate the cakemixes."""
+
+    def __init__(self, database: 'Database', **args):
+        """Create a BoilerplateTable object.
+
+        Args:
+            database (Database): [description]
+            args (tuple): [description]
+        """
+        super().__init__(**args)
+        self._database = database
+
+    def add_argument(self, **kwargs):
+        """[summary].
+
+        Args:
+            kwargs (dict): [description]
+        """
+        self.arguments.append(
+            self._database.add(
+                ArgumentTable, **kwargs,
+            ),
+        )
+
+    def add_path(self, **kwargs):
+        """[summary].
+
+        Args:
+            kwargs (dict): [description]
+        """
+        self.paths.append(
+            self._database.add(
+                PathTable, **kwargs,
+            ),
+        )
+
+
 class Database(object):
     """Provides high-level functions to manipulate the database."""
 
@@ -150,10 +150,6 @@ class Database(object):
 
         self._session = sessionmaker(bind=engine)()
 
-        self.cakemix_object = Cakemix
-        self.argument_object = ArgumentTable
-        self.path_object = PathTable
-
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
@@ -181,6 +177,15 @@ class Database(object):
         self._session.add(new_object)
 
         return new_object
+
+    def query(self, line_object: Callable) -> Query:
+        """[summary]
+
+        Args:
+            line_object (Callable): [description]
+        """
+
+        return self._session.query(line_object)
 
     def save(self):
         """Save data in database."""
