@@ -5,7 +5,7 @@ from typing import Any, Callable
 
 from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker, Query
+from sqlalchemy.orm import Query, relationship, sessionmaker
 from sqlalchemy_utils.types.choice import ChoiceType
 
 Base = declarative_base()
@@ -17,6 +17,8 @@ class CakemixTable(Base):
     __tablename__ = 'cakemixes'
 
     name = Column(String, primary_key=True)
+    description = Column(String)
+    author = Column(String)
     structure = Column(String, nullable=False)
 
     arguments = relationship('ArgumentTable', cascade='all, delete-orphan')
@@ -179,12 +181,14 @@ class Database(object):
         return new_object
 
     def query(self, line_object: Callable) -> Query:
-        """[summary]
+        """[summary].
 
         Args:
             line_object (Callable): [description]
-        """
 
+        Returns:
+            Query: [description]
+        """
         return self._session.query(line_object)
 
     def save(self):

@@ -3,8 +3,9 @@
 from pathlib import Path
 
 import click
+from rich.traceback import install as use_rich_traceback
 
-from cakemix.commands import add, remove, run
+from cakemix.commands import add, list_cakemixes, remove, run
 
 
 @click.group()
@@ -22,4 +23,7 @@ def cli():
 
 cli.add_command(add.add)
 cli.add_command(remove.remove)
+cli.add_command(list_cakemixes.list_cakemixes)
 cli.add_command(run.run)
+
+use_rich_traceback()

@@ -7,6 +7,14 @@ repos:
         args: [--in-place]
         language: python
         types: [python]
+        require_serial: true
+      - id: autoflake
+        name: autoflake-auto-format
+        entry: autoflake
+        args: [--in-place]
+        language: python
+        types: [python]
+        require_serial: true
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: ""
     hooks:

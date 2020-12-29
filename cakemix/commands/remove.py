@@ -13,9 +13,12 @@ def delete_cakemix(database: Database, cakemix_name: str):
     """[summary].
 
     Args:
+        database (Database): [description]
         cakemix_name (str): [description]
-    """
 
+    Returns:
+        Tuple[str, Any]: [description]
+    """
     cakemix = database.query(Cakemix).filter(Cakemix.name == cakemix_name)
 
     if cakemix:
@@ -38,7 +41,6 @@ def remove(cakemix_name: str):
     Args:
         cakemix_name (str): [description]
     """
-
     with Database() as database:
         run_task(
             'Deleting cakemix...',

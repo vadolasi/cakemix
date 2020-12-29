@@ -2,7 +2,7 @@
 
 from sqlalchemy_utils import assert_non_nullable
 
-from cakemix.database import Database
+from cakemix.database import Cakemix, Database
 
 
 def test_database():
