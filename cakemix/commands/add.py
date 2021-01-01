@@ -8,7 +8,7 @@ import toml
 from binaryornot.check import is_binary
 
 from cakemix.database import Cakemix, Database
-from cakemix.output import exit_with_error, run_task
+from cakemix.output import Task, exit_with_error
 
 
 def read_cakemix_src(database: Database, cakemix_src: Path):
@@ -21,11 +21,11 @@ def read_cakemix_src(database: Database, cakemix_src: Path):
     Returns:
         Tuple[Any]: Error and cakemix.
     """
-    if not Path(cakemix_src / 'structure.yaml').exists():
-        return ('File \"structure.yaml\" not found',)
+    if not (cakemix_src / 'structure.yaml').exists():
+        exit_with_error('File \"structure.yaml\" not found')
 
-    if not Path(cakemix_src / 'settings.toml').exists():
-        return ('File \"settings.toml\" not found',)
+    if not (cakemix_src / 'settings.toml').exists():
+        exit_with_error('File \"settings.toml\" not found')
 
     cakemix = database.add(
         Cakemix,
@@ -34,15 +34,17 @@ def read_cakemix_src(database: Database, cakemix_src: Path):
         **toml.loads(Path(cakemix_src / 'settings.toml').read_text()),
     )
 
-    if not Path(cakemix_src / 'arguments.toml').exists():
-        return ('File \"arguments.toml\" not found',)
+    if not (cakemix_src / 'parameters.toml').exists():
+        exit_with_error('File \"parameters.toml\" not found')
 
-    arguments = toml.loads(Path(cakemix_src / 'arguments.toml').read_text())
+    parameters = toml.loads(  # noqa: WPS110
+        Path(cakemix_src / 'parameters.toml').read_text(),
+    )
 
-    for argument_name, argument_options in arguments.items():
-        cakemix.add_argument(name=argument_name, **argument_options)
+    for parameter_name, parameter_options in parameters.items():
+        cakemix.add_parameter(name=parameter_name, **parameter_options)
 
-    return ('', cakemix)
+    return cakemix
 
 
 def read_paths(src_dir: Path, cakemix: Cakemix):
@@ -51,9 +53,6 @@ def read_paths(src_dir: Path, cakemix: Cakemix):
     Args:
         src_dir (Path): [description]
         cakemix (Cakemix): [description]
-
-    Returns:
-        Tuple[any]: Error
     """
     src_len = len(str(src_dir)) + 1
 
@@ -67,8 +66,6 @@ def read_paths(src_dir: Path, cakemix: Cakemix):
             else:
                 cakemix.add_path(path=path_str, content_type='plain_text')
 
-    return ('',)
-
 
 def save_cakemix(src_dir: Path, cakemix: Cakemix, database: Database):
     """Save the cakemix in database and in .cakemix/cakemixes dir.
@@ -77,9 +74,6 @@ def save_cakemix(src_dir: Path, cakemix: Cakemix, database: Database):
         src_dir (Path): [description]
         cakemix (Cakemix): [description]
         database (Database): [description]
-
-    Returns:
-        Tuple[Any]: Error
     """
     shutil.make_archive(
         str(Path.home() / '.cakemix' / 'cakemixes' / cakemix.name),
@@ -89,10 +83,8 @@ def save_cakemix(src_dir: Path, cakemix: Cakemix, database: Database):
 
     database.save()
 
-    return ('',)
 
-
-@click.command()
+@click.command('add')
 @click.argument('src')
 def add(src: str):
     """Add a cakemix.
@@ -110,23 +102,11 @@ def add(src: str):
     cakemix_src = src_dir / '.cakemixsrc'
 
     with Database() as database:
-        cakemix = run_task(
-            'Reading .cakemixsrc...',
-            '.cakemixsrc',
-            read_cakemix_src,
-            database,
-            cakemix_src,
-        )
+        with Task('Reading cakemix options...', 'Cakemix options read'):
+            cakemix = read_cakemix_src(database, cakemix_src)
 
-        run_task(
-            'Processing files...', 'Files processed', read_paths, src_dir, cakemix,
-        )
+        with Task('Processing files...', 'Files processed'):
+            read_paths(src_dir, cakemix)
 
-        run_task(
-            'Saving cakemix...',
-            f'Cakemix \"{cakemix.name}\" saved',
-            save_cakemix,
-            src_dir,
-            cakemix,
-            database,
-        )
+        with Task('Saving cakemix...', f'Cakemix \"{cakemix.name}\" saved'):
+            save_cakemix(src_dir, cakemix, database)

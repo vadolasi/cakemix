@@ -1,5 +1,6 @@
 """Test the CLI."""
 
+
 from click.testing import CliRunner
 
 from cakemix.cli import cli
@@ -37,4 +38,4 @@ def test_run():
     """Test the "run" command."""
     runner = CliRunner()
     output = runner.invoke(cli, ['run'])
-    assert output.exit_code == 0
+    assert output.exit_code == 2

@@ -13,3 +13,7 @@ cakemixes
 datefmt
 utils
 binaryornot
+filesystem
+questionary
+jinja2
+extractall

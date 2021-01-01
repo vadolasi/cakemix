@@ -3,7 +3,14 @@
 from pathlib import Path
 from typing import Any, Callable
 
-from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    create_engine,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Query, relationship, sessionmaker
 from sqlalchemy_utils.types.choice import ChoiceType
@@ -21,12 +28,12 @@ class CakemixTable(Base):
     author = Column(String)
     structure = Column(String, nullable=False)
 
-    arguments = relationship('ArgumentTable', cascade='all, delete-orphan')
-    paths = relationship('PathTable', cascade='all, delete-orphan')
+    parameters = relationship('ParameterTable', cascade='all, delete')  # noqa: WPS110
+    paths = relationship('PathTable', cascade='all, delete')
 
 
-class ArgumentTable(Base):
-    """Table with boilerplate arguments."""
+class ParameterTable(Base):
+    """Table with cakemix parameter."""
 
     parameter_type_choices = [
         ('argument', 'Argument'),
@@ -42,13 +49,15 @@ class ArgumentTable(Base):
         ('question', 'Question'),
     ]
 
-    __tablename__ = 'arguments'
+    __tablename__ = 'parameters'
 
     pk = Column(Integer, primary_key=True)
     cakemix_name = Column(
         Integer, ForeignKey('cakemixes.name'), nullable=False,
     )
     name = Column(String, nullable=False)
+    help_message = Column(String)
+    ask = Column(String)
     parameter_type = Column(
         ChoiceType(
             parameter_type_choices,
@@ -56,6 +65,9 @@ class ArgumentTable(Base):
     )
     input_type = Column(ChoiceType(input_type_choices), default='text')
     only = Column(ChoiceType(only_choices))
+    default = Column(String)
+    abbreviation = Column(String)
+    required = Column(Boolean, default=False)
 
     cakemix = relationship('Cakemix')
 
@@ -98,15 +110,15 @@ class Cakemix(CakemixTable):
         super().__init__(**args)
         self._database = database
 
-    def add_argument(self, **kwargs):
+    def add_parameter(self, **kwargs):
         """[summary].
 
         Args:
             kwargs (dict): [description]
         """
-        self.arguments.append(
+        self.parameters.append(
             self._database.add(
-                ArgumentTable, **kwargs,
+                ParameterTable, **kwargs,
             ),
         )
 

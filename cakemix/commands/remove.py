@@ -6,7 +6,7 @@ from pathlib import Path
 import click
 
 from cakemix.database import Cakemix, Database
-from cakemix.output import run_task
+from cakemix.output import Task, exit_with_error
 
 
 def delete_cakemix(database: Database, cakemix_name: str):
@@ -15,9 +15,6 @@ def delete_cakemix(database: Database, cakemix_name: str):
     Args:
         database (Database): [description]
         cakemix_name (str): [description]
-
-    Returns:
-        Tuple[str, Any]: [description]
     """
     cakemix = database.query(Cakemix).filter(Cakemix.name == cakemix_name)
 
@@ -27,13 +24,11 @@ def delete_cakemix(database: Database, cakemix_name: str):
         os.remove(
             Path.home() / '.cakemix' / 'cakemixes' / f'{cakemix_name}.zip',
         )
-
-        return ('',)
-
-    return (f'Cakemix \"{cakemix_name}\" not found',)
+    else:
+        exit_with_error(f'Cakemix \"{cakemix_name}\" not found')
 
 
-@click.command()
+@click.command('remove')
 @click.argument('cakemix_name')
 def remove(cakemix_name: str):
     """Remove a cakemix.
@@ -42,10 +37,5 @@ def remove(cakemix_name: str):
         cakemix_name (str): [description]
     """
     with Database() as database:
-        run_task(
-            'Deleting cakemix...',
-            f'Cakemix \"{cakemix_name}\" deleted',
-            delete_cakemix,
-            database,
-            cakemix_name,
-        )
+        with Task('Deleting cakemix...', f'Cakemix \"{cakemix_name}\" deleted'):
+            delete_cakemix(database, cakemix_name)

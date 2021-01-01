@@ -2,7 +2,7 @@
 
 import logging
 import sys
-from typing import Any, Callable
+from typing import Any
 
 from rich.console import Console
 from rich.logging import RichHandler
@@ -31,32 +31,35 @@ def exit_with_error(message: str):
     sys.exit(1)
 
 
-def run_task(
-    running_message: str,
-    success_message: str,
-    task_function: Callable,
-    *args: Any,
-    **kwargs: Any,
-) -> Any:
-    """[summary].
+class Task(object):
+    """Run task while show rich status."""
 
-    Args:
-        running_message (str): [description]
-        success_message (str): [description]
-        task_function (Callable): [description]
-        args (tuple): [description]
-        kwargs (dict): [description]
+    def __init__(
+        self, running_message: str, success_message: str, *args: Any, **kwargs: Any,
+    ):
+        """Create the status object.
 
-    Returns:
-        Any: [description]
-    """
-    with console.status(running_message):
-        task_result = task_function(*args, **kwargs)
+        Args:
+            running_message (str): [description]
+            success_message (str): [description]
+            args (Any): [description]
+            kwargs (Any): [description]
+        """
+        self.success_message = success_message
+        self.status = console.status(running_message, *args, **kwargs)
 
-    if task_result[0]:
-        exit_with_error(task_result[0])
-    else:
-        log.info(success_message, extra={'markup': True})
+    def __enter__(self):
+        """Start the task."""
+        self.status.start()
 
-    if len(task_result) > 1:
-        return task_result[1]
+    def __exit__(self, exception_type, exception_value, traceback):
+        """Close the task.
+
+        Args:
+            exception_type ([type]): [description]
+            exception_value ([type]): [description]
+            traceback ([type]): [description]
+        """
+        if exception_type != SystemExit:
+            self.status.stop()
+            console.log(self.success_message)
