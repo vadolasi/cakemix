@@ -56,7 +56,7 @@ pytest = "^6.2.1"
 pytest-randomly = "^3.5.0"
 pytest-cov = "^2.10.1"
 pre-commit = "^2.9.3"
-commitizen = "^2.11.1"
+commitizen = "^2.13.0"
 sqlalchemy-stubs = "^0.3"
 autoflake = "^1.4"
 
