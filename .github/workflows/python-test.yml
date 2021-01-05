@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-lasted]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: [3.6, 3.7, 3.8, 3.9]
     defaults:
       run:
@@ -41,4 +41,4 @@ jobs:
       - name: Run tests
         run: |
           source $VENV
-          pytest
+          doit test

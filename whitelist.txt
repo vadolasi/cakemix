@@ -17,3 +17,4 @@ filesystem
 questionary
 jinja2
 extractall
+codecov

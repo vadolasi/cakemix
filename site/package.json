@@ -1,0 +1,19 @@
+{
+  "name": "cakemix-site",
+  "version": "0.0.1",
+  "description": "The site of the Cakemix project",
+  "main": "index.js",
+  "authors": {
+    "name": "Vitor Daniel",
+    "email": "vitor036daniel@gmail.com"
+  },
+  "repository": "https://github.com/vadolasi/cakemix.git",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.5.3"
+  }
+}

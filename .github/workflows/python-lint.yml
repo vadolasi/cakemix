@@ -30,15 +30,10 @@ jobs:
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
     - name: Auto format
       run: |
-        poetry run pyformat --in-place ./**/*.py
-        poetry run autoflake --in-place ./**/*.py
-        poetry run isort ./**/*.py
-        poetry run add-trailing-comma ./**/*.p
+        poetry run doit auto_format
     - name: Lint and dependencies security check
       run: |
-        poetry run safety check
-        poetry run flakehell lint cakemix/ tests/
-        poetry run mypy ./**/*.py
+        poetry run doit lint
     - name: Test with pytest
       run: poetry run pytest --cov=cakemix --cov-report=xml
     - name: Upload coverage

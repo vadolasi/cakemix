@@ -1,56 +1,27 @@
 repos:
   - repo: local
     hooks:
-      - id: pyformat
-        name: pyformat-auto-format
-        entry: pyformat
-        args: [--in-place]
-        language: python
-        types: [python]
-        require_serial: true
-      - id: autoflake
-        name: autoflake-auto-format
-        entry: autoflake
-        args: [--in-place]
-        language: python
-        types: [python]
-        require_serial: true
-  - repo: https://github.com/pre-commit/mirrors-isort
-    rev: ""
-    hooks:
-      - id: isort
-        name: isort-auto-format
-  - repo: https://github.com/asottile/add-trailing-comma
-    rev: v2.0.1
-    hooks:
-      - id: add-trailing-comma
-        name: add-trailing-comma-auto-format
-  - repo: local
-    hooks:
-      - id: flakehell
-        name: flakehell-lint
-        entry: flakehell
-        args: ["lint", "cakemix/", "tests/"]
+      - id: auto-format
+        name: auto-format
+        entry: doit
+        args: [auto_format]
         language: python
         types: [python]
         pass_filenames: false
-      - id: pytest
-        name: pytest-unit-tests
-        entry: pytest
+      - id: lint
+        name: lint
+        entry: doit
+        args: [lint]
         language: python
+        types: [python]
         pass_filenames: false
-      - id: safety
-        name: safety-dependencies-check
-        entry: safety
-        args: [check, --full-report]
+      - id: test
+        name: test
+        entry: doit
+        args: [test]
         language: python
+        types: [python]
         pass_filenames: false
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: ""
-    hooks:
-      - id: mypy
-        name: mypy-types-check
-        additional_dependencies: ["sqlalchemy-stubs"]
   - repo: https://github.com/commitizen-tools/commitizen
     rev: master
     hooks:
