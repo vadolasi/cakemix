@@ -5,7 +5,14 @@ from pathlib import Path
 import click
 from rich.traceback import install as use_rich_traceback
 
-from cakemix.commands import add, list_cakemixes, remove, run
+from cakemix.commands import (
+    add,
+    add_code_snippet,
+    get_code_snippet,
+    list_cakemixes,
+    remove,
+    run,
+)
 
 
 @click.group()
@@ -22,6 +29,8 @@ def cli():
 
 
 cli.add_command(add.add)
+cli.add_command(add_code_snippet.add_code_snippet)
+cli.add_command(get_code_snippet.get_code_snippet)
 cli.add_command(remove.remove)
 cli.add_command(list_cakemixes.list_cakemixes)
 cli.add_command(run.run)

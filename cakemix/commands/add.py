@@ -6,6 +6,7 @@ from pathlib import Path
 import click
 import toml
 from binaryornot.check import is_binary
+from slugify import slugify
 
 from cakemix.database import Cakemix, Database
 from cakemix.output import Task, exit_with_error
@@ -27,11 +28,14 @@ def read_cakemix_src(database: Database, cakemix_src: Path):
     if not (cakemix_src / 'settings.toml').exists():
         exit_with_error('File \"settings.toml\" not found')
 
+    settings = toml.loads(Path(cakemix_src / 'settings.toml').read_text())
+
     cakemix = database.add(
         Cakemix,
         database,
+        name_slug=slugify(settings['name']),
         structure=Path(cakemix_src / 'structure.yaml').read_text(),
-        **toml.loads(Path(cakemix_src / 'settings.toml').read_text()),
+        **settings,
     )
 
     if not (cakemix_src / 'parameters.toml').exists():

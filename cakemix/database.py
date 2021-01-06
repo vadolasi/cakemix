@@ -23,7 +23,8 @@ class CakemixTable(Base):
 
     __tablename__ = 'cakemixes'
 
-    name = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    name_slug = Column(String, nullable=False, primary_key=True)
     description = Column(String)
     author = Column(String)
     structure = Column(String, nullable=False)
@@ -53,7 +54,7 @@ class ParameterTable(Base):
 
     pk = Column(Integer, primary_key=True)
     cakemix_name = Column(
-        Integer, ForeignKey('cakemixes.name'), nullable=False,
+        Integer, ForeignKey('cakemixes.name_slug'), nullable=False,
     )
     name = Column(String, nullable=False)
     help_message = Column(String)
@@ -85,7 +86,7 @@ class PathTable(Base):
 
     pk = Column(Integer, primary_key=True)
     cakemix_name = Column(
-        Integer, ForeignKey('cakemixes.name'), nullable=False,
+        Integer, ForeignKey('cakemixes.name_slug'), nullable=False,
     )
     path = Column(String, nullable=False)
     content_type = Column(
@@ -133,6 +134,18 @@ class Cakemix(CakemixTable):
                 PathTable, **kwargs,
             ),
         )
+
+
+class CodeSnippet(Base):
+    """Table with the code snippets."""
+
+    __tablename__ = 'code_snippets'
+
+    title = Column(String, nullable=False)
+    title_slug = Column(String, nullable=False, primary_key=True)
+    description = Column(String)
+    tags = Column(String)
+    code_snippet = Column(String, nullable=False)
 
 
 class Database(object):

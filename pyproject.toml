@@ -43,12 +43,13 @@ Jinja2 = "^2.11.2"
 click-pathlib = "^2020.3.13"
 Mako = "^1.1.3"
 rinohtype = "^0.4.2"
+pyperclip = "^1.8.1"
+python-slugify = "^4.0.1"
 
 [tool.poetry.dev-dependencies]
 wemake-python-styleguide = "^0.14.1"
 flakehell = "^0.7.1"
 flake8-dashboard = "^0.1.4"
-flake8-spellcheck = "^0.20.0"
 flake8-todos = "^0.1.5"
 flake8-pytest-style = "^1.3.0"
 safety = "^1.10.0"
@@ -78,10 +79,11 @@ exclude = [
     "build/",
     ".mypy_cache/",
     ".pytest_cache/",
+    ".venv",
 ]
 
 [tool.flakehell.plugins]
-"flake8-*" = ["+*", "-E400", "-DAR103"]
+"flake8-*" = ["+*", "-E400", "-DAR103", "-SC200"]
 mccabe = ["+*"]
 "pep8-naming" = ["+*"]
 pycodestyle = ["+*"]
@@ -94,6 +96,9 @@ pyflakes = ["+*"]
 
 [tool.flakehell.exceptions."cakemix/output.py"]
 "wemake-python-styleguide" = ["+*", "-WPS323"]
+
+[tool.flakehell.exceptions."cakemix/commands/add_code_snippet.py"]
+"wemake-python-styleguide" = ["-WPS232"]
 
 [tool.flakehell.exceptions."dodo.py"]
 "flake8-*" = ["+*", "-DAR201"]

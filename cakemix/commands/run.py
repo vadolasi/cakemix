@@ -190,7 +190,7 @@ def run(cakemix_name: str, dst: Path, args: tuple):  # noqa: WPS210
     )
 
     with Database() as database:
-        cakemix = database.query(Cakemix).get({'name': cakemix_name})
+        cakemix = database.query(Cakemix).get({'name_slug': cakemix_name})
 
         with Task('Reading arguments...', 'Arguments read'):
             arguments = read_arguments(database, cakemix, args)
