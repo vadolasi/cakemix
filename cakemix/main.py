@@ -13,8 +13,6 @@ app = typer.Typer()
 
 @app.command()
 def main(cakemix_path: str, output_path: Path = "."):
-    os.chdir("../")
-
     with TemporaryDirectory() as tempdir:
         Repo.clone_from(cakemix_path, tempdir)
 
