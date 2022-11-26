@@ -15,17 +15,29 @@ def main(cakemix_path: str, output_path: str):
     with TemporaryDirectory() as tempdir:
         Repo.clone_from(cakemix_path, tempdir)
 
-        inputs = []
+        answers = {}
 
         cakemix_config = yaml.safe_load(Path(tempdir, "cakemix.yaml").read_text())
+        cakemix_args_file_text = Path(tempdir, "args.yaml.j2").read_text()
+
+        for document in cakemix_args_file_text.split("---"):
+            inputs = []
+
+            cakemix_args = yaml.safe_load(Template(document).render(answers))
+
+            if cakemix_args is None:
+                continue
+
+            for arg in cakemix_args:
+                match arg.get("type", "text"):
+                    case "text":
+                        inputs.append(inquirer.Text(name=arg["name"], message=arg["message"]))
+                    case _:
+                        raise NotImplementedError
+
+            answers.update(inquirer.prompt(inputs))
+
         main_path = cakemix_config["main_dir"]
-
-        for arg in cakemix_config["args"]:
-            match arg["type"]:
-                case "text":
-                    inputs.append(inquirer.Text(name=arg["name"], message=arg["message"]))
-
-        answers = inquirer.prompt(inputs)
 
         for _, _, filenames in os.walk(str(Path(tempdir, main_path))):
             for path in filenames:
