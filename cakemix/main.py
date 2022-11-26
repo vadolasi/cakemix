@@ -26,7 +26,7 @@ def main(cakemix_path: str, output_path: Path = "."):
         for document in cakemix_args_file_text.split("---"):
             inputs = []
 
-            cakemix_args = yaml.safe_load(Template(document).render(answers))
+            cakemix_args = yaml.safe_load(Template(document).render(cakemix=answers))
 
             if cakemix_args is None:
                 continue
@@ -80,6 +80,43 @@ def main(cakemix_path: str, output_path: Path = "."):
                     result = Path(output_path, path_result)
 
                     result.write_bytes(file.read_bytes())
+
+        files_actions_file = Path(tempdir, "files.yaml.j2")
+
+        if files_actions_file.exists():
+            files_actions = yaml.safe_load(Template(files_actions_file.read_text()).render(cakemix=answers))
+
+            for action in files_actions:
+                match action["command"]:
+                    case "copy":
+                        Path(
+                            output_path,
+                            Template(action["to"]).render(cakemix=answers)
+                        ).write_bytes(
+                            Path(
+                                output_path,
+                                Template(action["from"]).render(cakemix=answers)
+                            ).read_bytes()
+                        )
+                    case "move":
+                        Path(
+                            output_path,
+                            Template(action["to"]).render(cakemix=answers)
+                        ).write_bytes(
+                            Path(
+                                output_path,
+                                Template(action["from"]).render(cakemix=answers)
+                            ).read_bytes()
+                        )
+                        Path(
+                            output_path,
+                            Template(action["from"]).render(cakemix=answers)
+                        ).unlink()
+                    case "delete":
+                        Path(
+                            output_path,
+                            Template(action["path"]).render(cakemix=answers)
+                        ).unlink()
 
 
 if __name__ == "__main__":
