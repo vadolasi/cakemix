@@ -1,42 +1,49 @@
+import os
 from tempfile import TemporaryDirectory
 from pathlib import Path
 from jinja2 import Template
 
+import inquirer
 import typer
+import yaml
 from git import Repo
 
 app = typer.Typer()
 
 
-def list_paths(root_tree, path=Path(".")):
-    for blob in root_tree.blobs:
-        yield path / blob.name
-    for tree in root_tree.trees:
-        yield from list_paths(tree, path / tree.name)
-
-
 def main(cakemix_path: str, output_path: str):
     with TemporaryDirectory() as tempdir:
-        repo = Repo.clone_from(cakemix_path, tempdir)
+        Repo.clone_from(cakemix_path, tempdir)
 
-        commit = repo.head.commit
+        inputs = []
 
-        for path in list_paths(commit.tree):
-            file = Path(tempdir, path)
+        cakemix_config = yaml.safe_load(Path(tempdir, "cakemix.yaml").read_text())
+        main_path = cakemix_config["main_dir"]
 
-            try:
-                text = file.read_text()
+        for arg in cakemix_config["args"]:
+            match arg["type"]:
+                case "text":
+                    inputs.append(inquirer.Text(name=arg["name"], message=arg["message"]))
 
-                template: Template = Template(text)
-                data = template.render({ "a": "b" })
+        answers = inquirer.prompt(inputs)
 
-                result = Path(output_path, path)
+        for _, _, filenames in os.walk(str(Path(tempdir, main_path))):
+            for path in filenames:
+                file = Path(tempdir, main_path, path)
 
-                result.parent.mkdir(parents=True, exist_ok=True)
-                result.write_text(data)
+                try:
+                    text = file.read_text()
 
-            except:
-                continue
+                    template: Template = Template(text)
+                    data = template.render(answers)
+
+                    result = Path(output_path, path)
+
+                    result.parent.mkdir(parents=True, exist_ok=True)
+                    result.write_text(data)
+
+                except:
+                    continue
 
 
 if __name__ == "__main__":
