@@ -12,18 +12,20 @@ app = typer.Typer()
 
 
 def main(cakemix_path: str, output_path: str):
+    os.chdir("../")
+
     with TemporaryDirectory() as tempdir:
         Repo.clone_from(cakemix_path, tempdir)
 
         answers = {}
 
-        cakemix_config = yaml.safe_load(Path(tempdir, "cakemix.yaml").read_text())
+        cakemix_config = yaml.safe_load(Path(tempdir, "config.yaml").read_text())
         cakemix_args_file_text = Path(tempdir, "args.yaml.j2").read_text()
 
         for document in cakemix_args_file_text.split("---"):
             inputs = []
 
-            cakemix_args = yaml.safe_load(Template(document).render(answers))
+            cakemix_args = yaml.safe_load(Template(document).render(cakemix=answers))
 
             if cakemix_args is None:
                 continue
@@ -39,7 +41,12 @@ def main(cakemix_path: str, output_path: str):
 
         main_path = cakemix_config["main_dir"]
 
-        for _, _, filenames in os.walk(str(Path(tempdir, main_path))):
+        for _, dirs, filenames in os.walk(str(Path(tempdir, main_path))):
+            Path(output_path).mkdir(parents=True, exist_ok=True)
+
+            for directory in dirs:
+                Path(output_path, directory).mkdir(parents=True, exist_ok=True)
+
             for path in filenames:
                 file = Path(tempdir, main_path, path)
 
@@ -47,16 +54,16 @@ def main(cakemix_path: str, output_path: str):
                     text = file.read_text()
 
                     template: Template = Template(text)
-                    data = template.render(answers)
+                    data = template.render(cakemix=answers)
 
                     result = Path(output_path, path)
-
-                    result.parent.mkdir(parents=True, exist_ok=True)
                     result.write_text(data)
 
                 except:
-                    continue
+                    result = Path(output_path, path)
+
+                    result.write_bytes(file.read_bytes())
 
 
-if __name__ == "__main__":
+def run():
     typer.run(main)

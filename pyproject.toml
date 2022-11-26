@@ -5,14 +5,16 @@ description = ""
 authors = ["Vitor Daniel <vitor036daniel@gmail.com>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+cakemix = "cakemix.main:run"
+
 [tool.poetry.dependencies]
 python = "^3.11"
-typer = {extras = ["all"], version = "^0.7.0"}
+typer = { extras = ["all"], version = "^0.7.0" }
 jinja2 = "^3.1.2"
 gitpython = "^3.1.29"
 inquirer = "^3.0.0"
 pyyaml = "^6.0"
-
 
 [build-system]
 requires = ["poetry-core"]
