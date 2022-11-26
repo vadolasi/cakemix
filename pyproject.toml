@@ -6,7 +6,7 @@ authors = ["Vitor Daniel <vitor036daniel@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-cakemix = "cakemix.main:run"
+cakemix = "cakemix.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.11"

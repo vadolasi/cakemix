@@ -11,7 +11,8 @@ from git import Repo
 app = typer.Typer()
 
 
-def main(cakemix_path: str, output_path: str):
+@app.command()
+def main(cakemix_path: str, output_path: Path = "."):
     os.chdir("../")
 
     with TemporaryDirectory() as tempdir:
@@ -25,7 +26,7 @@ def main(cakemix_path: str, output_path: str):
         for document in cakemix_args_file_text.split("---"):
             inputs = []
 
-            cakemix_args = yaml.safe_load(Template(document).render(cakemix=answers))
+            cakemix_args = yaml.safe_load(Template(document).render(answers))
 
             if cakemix_args is None:
                 continue
@@ -33,7 +34,19 @@ def main(cakemix_path: str, output_path: str):
             for arg in cakemix_args:
                 match arg.get("type", "text"):
                     case "text":
-                        inputs.append(inquirer.Text(name=arg["name"], message=arg["message"]))
+                        inputs.append(inquirer.Text(name=arg["name"], message=arg["message"], default=arg.get("default", None)))
+                    case "list":
+                        inputs.append(inquirer.List(name=arg["name"], message=arg["message"], choices=arg["choices"], default=arg.get("default", None)))
+                    case "confirm":
+                        inputs.append(inquirer.Confirm(name=arg["name"], message=arg["message"], default=arg.get("default", None)))
+                    case "password":
+                        inputs.append(inquirer.Password(name=arg["name"], message=arg["message"], default=arg.get("default", None)))
+                    case "path":
+                        inputs.append(inquirer.Path(name=arg["name"], message=arg["message"], default=arg.get("default", None)))
+                    case "editor":
+                        inputs.append(inquirer.Editor(name=arg["name"], message=arg["message"], default=arg.get("default", None)))
+                    case "checkbox":
+                        inputs.append(inquirer.Checkbox(name=arg["name"], message=arg["message"], choices=arg["choices"], default=arg.get("default", None)))
                     case _:
                         raise NotImplementedError
 
@@ -56,14 +69,18 @@ def main(cakemix_path: str, output_path: str):
                     template: Template = Template(text)
                     data = template.render(cakemix=answers)
 
-                    result = Path(output_path, path)
+                    path_result = Template(path).render(cakemix=answers)
+
+                    result = Path(output_path, path_result)
                     result.write_text(data)
 
                 except:
-                    result = Path(output_path, path)
+                    path_result = Template(path).render(cakemix=answers)
+
+                    result = Path(output_path, path_result)
 
                     result.write_bytes(file.read_bytes())
 
 
-def run():
-    typer.run(main)
+if __name__ == "__main__":
+    app()

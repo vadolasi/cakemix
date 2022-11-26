@@ -1,3 +1,3 @@
 # Cakemix
 
-Easy code boilerplates
+Easy and powerful code boilerplates
